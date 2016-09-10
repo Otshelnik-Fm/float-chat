@@ -1,0 +1,177 @@
+/* START effect-animation */
+html body.ssi-modalOpen {
+    background: rgba(0, 0, 0, 0.9);
+}
+body.ssi-modalOpen #recallbar,
+body.ssi-modalOpen > div:first-of-type {
+    -webkit-filter: blur(4px) grayscale(0.8);
+    filter: blur(4px) grayscale(0.8);
+}
+.ssi-modalOuter.fc_float_chat {
+    animation-duration: 0.5s;
+    animation-fill-mode: both;
+    animation-name: fchat_animation;
+}
+@keyframes fchat_animation {
+    0% {
+        -webkit-transform: translate3d(0px, -100%, 0px);
+        transform: translate3d(0px, -100%, 0px);
+        visibility: visible;
+    }
+    100% {
+        -webkit-transform: translate3d(0px, 0px, 0px);
+        transform: translate3d(0px, 0px, 0px);
+    }
+}
+/* END effect-animation */
+
+
+/* START Fixed button */
+#tab-button-fc_float_chat {
+    left: 0;
+    opacity: 0.6;
+    position: fixed;
+    top: 55px;
+    -webkit-transform: translateX(-40px);
+    transform: translateX(-40px);
+    transition: all 0.3s ease-in 0s;
+    z-index: 101;
+}
+#tab-button-fc_float_chat:hover {
+    -webkit-transform: none;
+    transform: none;
+    opacity: 1;
+}
+#tab-button-fc_float_chat:hover .recall-button {
+    opacity: 1;
+}
+#tab-button-fc_float_chat .recall-button.rcl-dialog {
+    border-left: 4px solid #ff6347;
+    border-radius: 0 3px 3px 0;
+    color: #fff;
+    display: table;
+}
+#tab-button-fc_float_chat .recall-button.rcl-dialog:focus {
+    outline: 0;
+}
+#tab-button-fc_float_chat .fa {
+    display: table;
+    font-size: 36px;
+    line-height: 30px;
+    margin: 0 auto;
+    padding: 0;
+}
+#tab-button-fc_float_chat span {
+    font-size: 14px;
+    margin: 0;
+}
+/* END Fixed button */
+
+
+/* START wiget button */
+.widget.widget_text #tab-button-fc_float_chat {
+    opacity: 1;
+    position: inherit;
+    -webkit-transform: none;
+    transform: none;
+}
+.widget.widget_text #tab-button-fc_float_chat .recall-button {
+    border: none;
+    border-radius: 0;
+}
+/* END wiget button */
+
+
+.ssi-modalOuter.fc_float_chat .ssi-modalWindow {
+    border-radius: 4px;
+}
+.ssi-modalOuter.fc_float_chat .ssi-closeIcon {
+    margin: 3px 8px 0 0;
+}
+.ssi-modalOuter.fc_float_chat .ssi-modalContent {
+    padding: 0;
+}
+.ssi-modalOuter.fc_float_chat h3 {
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: normal;
+    margin: 7px 20px;
+    padding: 0;
+    text-transform: none;
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat .chat-users-box {
+    background-color: #eaeaea;
+    margin: 0;
+    padding: 10px 20px 10px 10px;
+}
+.ssi-modalOuter.fc_float_chat .chat-users-box > span {
+    font-size: 16px;
+}
+.ssi-modalOuter.fc_float_chat .chat-meta {
+    line-height: 23px;
+    padding: 0;
+}
+.ssi-modalOuter.fc_float_chat .chat-messages {
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.ssi-modalOuter.fc_float_chat .rcl-pager {
+    padding: 10px 50px;
+}
+.ssi-modalOuter.fc_float_chat .chat-form {
+    padding: 0 10px 5px;
+}
+.ssi-modalOuter.fc_float_chat textarea {
+    background-color: #ededed;
+    border: 1px solid #ccc;
+    line-height: 23px;
+    margin: 0 30px 0 0;
+    min-height: 110px;
+    padding: 5px 10px;
+    width: calc(100% - 22px);
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat .rcl-chat-uploader {
+    margin: 75px 0 0;
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat .chat-form .chat-preloader-file {
+    display: inline-block;
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat .chat-form .chat-submit {
+    font-size: 14px;
+    margin: 16px 22px 15px 0;
+    padding: 8px 12px;
+}
+.ssi-modalOuter.fc_float_chat .ssi-modalWindow .ssi-buttons {
+    display: none;
+}
+.ssi-modalOuter.fc_float_chat .rcl-chat .chat-form .chat-preloader-file {
+    background-color: #d9d9d9;
+    margin: 5px 10px;
+}
+.ssi-modalOuter.fc_float_chat .chat-preloader-file .chat-delete-attachment {
+    background: rgba(0, 0, 0, 0.5);
+    color: #e53935;
+    font-size: 24px;
+    padding: 3px 5px;
+    right: 0;
+    top: 0;
+}
+.ssi-modalOuter.fc_float_chat .chat-preloader-file img {
+    border: none;
+    height: auto;
+    margin: 5px;
+    padding: 0;
+}
+.ssi-modalOuter.fc_float_chat iframe[src*="youtube"] {
+    min-height: 250px;
+    width: 100%;
+}
+.ssi-modalOuter.fc_float_chat iframe[src*="soundcloud"] {
+    width: 100%;
+}
