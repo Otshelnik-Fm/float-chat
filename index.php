@@ -37,9 +37,18 @@ add_action('init','fchat_tab');
 
 // функция обработчик
 // мы правильные ребята - do_shortcode не используем
+// но для примера его ниже оставил
 function fchat_shortcode(){
-    $content = '<h3>Чат:</h3>';
-    $content .= rcl_chat_shortcode(array('chat_room'=>'fchat','userslist'=>1,'file_upload'=>1,'in_page'=>30));
+    global $rcl_options;
+
+    $fchat_uploads = 0;
+    if($rcl_options['fchat_upload'] == 'yes') $fchat_uploads = 1;
+
+    $fchat_name = '';
+    if(isset($rcl_options['fchat_name'])) $fchat_name = '<h3>'.$rcl_options['fchat_name'].'</h3>';
+
+    $content = $fchat_name;
+    $content .= rcl_chat_shortcode(array('chat_room'=>'fchat','userslist'=>1,'file_upload'=>$fchat_uploads,'in_page'=>30));
     //$content .= do_shortcode('[rcl-chat chat_room="fchat" userslist="1" file_upload="1" in_page="15"]');
     return $content;
 }
@@ -53,6 +62,10 @@ function fchat_shortcode(){
 //
 // if(e.target != this) return; - чтобы только по клику на этих элементах, а не на дочерних
 // - касается глобального класса .ssi-modalOuter.fc_float_chat
+//
+// по клику на кнопке показываю в ней спиннер загрузки
+// хотя спинер автоматом убивается как контент вкладки загружен, а по таймауту на всякий случай убираю его
+// можно было повесить на js событие rcl_add_action('rcl_upload_tab','наша ф-ция'), но не стал
 function fchat_burn_in_hell(){
     if (!function_exists('rcl_insert_chat')) return false; // если не активен Rcl Chat (Чат)
     echo "<script>
@@ -62,6 +75,14 @@ $(document).on( 'click', '.ssi-modalOuter.fc_float_chat, .ssi-modalOuter.fc_floa
     console.info('fchat: click close');
     rcl_chat_clear_beat('ZmNoYXQ=');
     console.log('fchat: You killed me :(');
+});
+
+// ставим спинер на кнопку по вызову чата
+$('#tab-button-fc_float_chat').click(function(){
+    rcl_preloader_show('#tab-button-fc_float_chat > a > i');
+    setTimeout(function(){
+        rcl_preloader_hide();
+    },2000)
 });
 })(jQuery);
 </script>";
@@ -81,19 +102,25 @@ add_action('wp_footer','fchat_burn_in_hell');
 
 
 /*
-*   TODO: скрипт fileupload нам нужен, если в чате разрешена загрузка файлов
-*         В дальнейшем можно опцией сделать отключать загрузку файлов и не забыть похерить этот скрипт
+*   TODO:
+*       9-09-2016
+*           Скрипт fileupload нам нужен, если в чате разрешена загрузка файлов
+*           В дальнейшем можно опцией сделать отключать загрузку файлов и не забыть похерить этот скрипт
+*       29-09-2016 - выполнено
 */
 
-// вывод кнопки за пределами личного кабинета
+// функция вывода кнопки за пределами личного кабинета
 function f_chat_button(){
     if (!function_exists('rcl_insert_chat')) return false; // если не активен Rcl Chat (Чат)
 
-    global $user_ID;
+    global $user_ID, $rcl_options;
     $button = rcl_get_tab_button('fc_float_chat',$user_ID);
 
     rcl_dialog_scripts();       // скрипты ssi
-    rcl_fileupload_scripts();	// скрипты fileupload (загрузка файлов)
+
+    if($rcl_options['fchat_upload'] == 'yes') { // в настройках разрешена загрузка файлов
+        rcl_fileupload_scripts();               // скрипты fileupload (загрузка файлов)
+    }
 
     return $button;
 }
