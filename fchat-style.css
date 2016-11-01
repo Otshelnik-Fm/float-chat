@@ -26,8 +26,7 @@ body.ssi-modalOpen > div:first-of-type {
 /* END effect-animation */
 
 #tab-button-fc_float_chat .rcl_preloader i {
-    font-size: 30px;
-    margin: auto;
+    margin: auto !important;
     padding: 0;
     right: 0;
     top: 13px;

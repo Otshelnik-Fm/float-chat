@@ -79,7 +79,7 @@ $(document).on( 'click', '.ssi-modalOuter.fc_float_chat, .ssi-modalOuter.fc_floa
 
 // ставим спинер на кнопку по вызову чата
 $('#tab-button-fc_float_chat').click(function(){
-    rcl_preloader_show('#tab-button-fc_float_chat > a > i');
+    rcl_preloader_show('#tab-button-fc_float_chat > a > i',30);
     setTimeout(function(){
         rcl_preloader_hide();
     },2000)
