@@ -9,7 +9,7 @@ body.ssi-modalOpen > div:first-of-type {
 }
 .ssi-modalOuter.fc_float_chat {
     animation-duration: 0.5s;
-    animation-fill-mode: both;
+    animation-fill-mode: backwards;
     animation-name: fchat_animation;
 }
 @keyframes fchat_animation {
