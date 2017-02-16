@@ -1,6 +1,6 @@
 Name: Float Chat;
-Version: 1.1.2;
-Support Core: 15.4;
+Version: 1.2;
+Support Core: 15.9.0;
 Description: Добавляет на ваш сайт чат в всплывающем окне. Зависит от дополнения Rcl Chat (Чат);
 Author: Владимир Дружаев (Otshelnik-Fm), Плечев Андрей;
 Author URI: https://codeseller.ru/;

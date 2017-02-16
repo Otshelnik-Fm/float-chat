@@ -181,3 +181,14 @@ body.ssi-modalOpen > div:first-of-type {
 .ssi-modalOuter.fc_float_chat iframe[src*="soundcloud"] {
     width: 100%;
 }
+.chat-notice .notice-error:empty {
+    display: none;
+}
+.ssi-modalOuter.fc_float_chat .fchat_guest_info {
+    text-align: center;
+    display: block;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: rgb(229, 57, 53);
+}

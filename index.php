@@ -39,17 +39,35 @@ add_action('init','fchat_tab');
 // мы правильные ребята - do_shortcode не используем
 // но для примера его ниже оставил
 function fchat_shortcode(){
-    global $rcl_options;
+    global $rcl_options, $user_ID;
 
     $fchat_uploads = 0;
     if($rcl_options['fchat_upload'] == 'yes') $fchat_uploads = 1;
 
     $fchat_name = '';
+    // получим чат
+    $get_chat = rcl_chat_shortcode(array('chat_room'=>'fchat','userslist'=>1,'file_upload'=>$fchat_uploads,'in_page'=>30));
+    //$get_chat = do_shortcode('[rcl-chat chat_room="fchat" userslist="1" file_upload="1" in_page="15"]');
+
     if(isset($rcl_options['fchat_name'])) $fchat_name = '<h3>'.$rcl_options['fchat_name'].'</h3>';
 
     $content = $fchat_name;
-    $content .= rcl_chat_shortcode(array('chat_room'=>'fchat','userslist'=>1,'file_upload'=>$fchat_uploads,'in_page'=>30));
-    //$content .= do_shortcode('[rcl-chat chat_room="fchat" userslist="1" file_upload="1" in_page="15"]');
+
+    if($rcl_options['fchat_guest'] == 1){   // гость может смотреть чат
+        $content .= $get_chat;
+    } else {                                // гостю нельзя смотреть чать
+        if($user_ID){
+            $content .= $get_chat;
+        } else {
+            $content .= '<div class="chat-form">';
+                $content .= '<div class="chat-notice"><span class="notice-error"></span></div>'; // поддержка допа you need to login
+            $content .= '</div>';
+            $content .= rcl_get_include_template('fchat-guest-info.php',__FILE__); // подключаем шаблон
+        }
+    }
+
+
+
     return $content;
 }
 
