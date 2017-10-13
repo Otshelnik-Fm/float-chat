@@ -7,7 +7,7 @@ function fc_settings($options){
                . 'title="Перейти к странице управления дополнениями"> управления дополнениями</a><br/>и активируйте ';
 
     $fc_message = '';
-    if (!function_exists('rcl_insert_chat')){   // если не активен Чат
+    if ( !rcl_exist_addon('rcl-chat') ){   // если не активен Чат
     $fc_message = $fc_warning.'<span class="adm_warn adm_b14">- У вас не активирован Чат!</span><br/>'
                  .$fc_link. 'Rcl Chat (Чат)<br/>';
     }
