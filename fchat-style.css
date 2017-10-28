@@ -1,12 +1,4 @@
 /* START effect-animation */
-html body.ssi-modalOpen {
-    background: rgba(0, 0, 0, 0.9);
-}
-body.ssi-modalOpen #recallbar,
-body.ssi-modalOpen > div:first-of-type {
-    -webkit-filter: blur(4px) grayscale(0.8);
-    filter: blur(4px) grayscale(0.8);
-}
 .ssi-modalOuter.fc_float_chat {
     animation-duration: 0.5s;
     animation-fill-mode: backwards;
