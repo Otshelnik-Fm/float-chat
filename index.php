@@ -1,12 +1,22 @@
 <?php
 
+/*
+
+╔═╗╔╦╗╔═╗╔╦╗
+║ ║ ║ ╠╣ ║║║ http://otshelnik-fm.ru
+╚═╝ ╩ ╚  ╩ ╩
+
+*/
+
+
+
 require_once('settings.php');
 
 // подключаем стиль
 function fc_add_style(){
     if ( !rcl_exist_addon('rcl-chat') ) return false;  // если не активен Rcl Chat (Чат)
 
-    rcl_enqueue_style('fchat_style',rcl_addon_url('fchat-style.css', __FILE__));
+    rcl_enqueue_style('fchat_style', rcl_addon_url('fchat-style.css', __FILE__), true);
 }
 if (!is_admin()) {
     add_action('rcl_enqueue_scripts','fc_add_style',10);
@@ -25,7 +35,7 @@ function fchat_tab(){
         'icon'=>'fa-laptop',
         'output'=> '',          // не задаем вывод, т.к. нам не нужен вывод в лк. Ф-ция ниже fchat_button() выведет где нам надо
         'content'=>array(
-            array(		//массив данных первой дочерней вкладки
+            array(		// массив данных первой дочерней вкладки
                 'callback' => array(
                     'name'=>'fchat_shortcode',
                 )

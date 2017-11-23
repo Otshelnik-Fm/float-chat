@@ -1,21 +1,6 @@
-/* START effect-animation */
 .ssi-modalOuter.fc_float_chat {
-    animation-duration: 0.5s;
-    animation-fill-mode: backwards;
-    animation-name: fchat_animation;
+    animation-name: fadeInDownBig;
 }
-@keyframes fchat_animation {
-    0% {
-        -webkit-transform: translate3d(0px, -100%, 0px);
-        transform: translate3d(0px, -100%, 0px);
-        visibility: visible;
-    }
-    100% {
-        -webkit-transform: translate3d(0px, 0px, 0px);
-        transform: translate3d(0px, 0px, 0px);
-    }
-}
-/* END effect-animation */
 
 #tab-button-fc_float_chat {
     position: relative;
@@ -68,10 +53,6 @@ body > #tab-button-fc_float_chat .rcl_preloader i {
 }
 /* END Fixed button */
 
-
-.ssi-modalOuter.fc_float_chat .ssi-modalWindow {
-    border-radius: 4px;
-}
 .ssi-modalOuter.fc_float_chat .ssi-closeIcon {
     margin: 3px 8px 0 0;
 }
