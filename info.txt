@@ -1,7 +1,7 @@
 Name: Float Chat;
-Version: 1.4;
+Version: 1.4.1;
 Support Core: 16.8.0;
 Description: Добавляет на ваш сайт чат в всплывающем окне. Зависит от дополнения Rcl Chat (Чат);
 Author: Владимир Дружаев (Otshelnik-Fm), Плечев Андрей;
-Author URI: http://otshelnik-fm.ru/;
+Author URI: https://otshelnik-fm.ru/;
 Add-on URI: https://codeseller.ru/products/float-chat/;

@@ -3,7 +3,7 @@
 /*
 
 ╔═╗╔╦╗╔═╗╔╦╗
-║ ║ ║ ╠╣ ║║║ http://otshelnik-fm.ru
+║ ║ ║ ╠╣ ║║║ https://otshelnik-fm.ru
 ╚═╝ ╩ ╚  ╩ ╩
 
 */
@@ -169,3 +169,11 @@ function fchat_init_shortcode(){
 }
 add_shortcode('fchat_init','fchat_init_shortcode');
 
+
+
+// инлайн стиль в шапке -чтоб не дергалась кнопка
+function fchat_inline_styles($styles){
+    $styles .= 'body > #tab-button-fc_float_chat{display: none;}';
+    return $styles;
+}
+add_filter('rcl_inline_styles','fchat_inline_styles',10);
