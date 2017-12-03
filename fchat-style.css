@@ -7,7 +7,7 @@
 }
 
 /* START Fixed button */
-body > #tab-button-fc_float_chat {
+body > span#tab-button-fc_float_chat {
     animation-delay: .9s;
     animation-duration: .5s;
     animation-fill-mode: both;
