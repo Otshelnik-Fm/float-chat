@@ -9,48 +9,43 @@
 */
 
 
+// подключаем настройки в админке, но не в управлении мультисайта
+// баг мультисайта описан здесь https://otshelnik-fm.ru/?p=3629
+if( is_admin() && !is_network_admin() ){
+    require_once 'settings.php';
+}
 
-require_once('settings.php');
 
+
+// svg inliner     http://yoksel.github.io/url-encoder/ru/
+// svg compressor  https://jakearchibald.github.io/svgomg/
+// great packer http://dean.edwards.name/packer/
+// great packer https://cssminifier.com/
 // подключаем стиль
-function fc_add_style(){
-    if ( !rcl_exist_addon('rcl-chat') ) return false;  // если не активен Rcl Chat (Чат)
+function fchat_load_resourse(){
+    if ( !rcl_exist_addon('rcl-chat') ) return false;   // если не активен Rcl Chat (Чат)
 
-    rcl_enqueue_style('fchat_style', rcl_addon_url('fchat-style.css', __FILE__), true);
+    rcl_enqueue_script('fchat_script', rcl_addon_url('inc/fchat-js.min.js', __FILE__), false, true);
+
+    if( rcl_get_option('fchat_guest', 'yes') !== 'yes' && !is_user_logged_in() ){   // гости могут чат видеть
+        rcl_enqueue_style('fchat_style_guests', rcl_addon_url('inc/fchat-style-guests.min.css', __FILE__), true);
+    } else {
+        rcl_enqueue_style('fchat_style', rcl_addon_url('inc/fchat-style.min.css', __FILE__), true);
+    }
 }
-if (!is_admin()) {
-    add_action('rcl_enqueue_scripts','fc_add_style',10);
+if ( !is_admin() ) {
+    add_action('rcl_enqueue_scripts','fchat_load_resourse',10);
 }
 
 
-// добавляем кнопку в лк
-function fchat_tab(){
-    if ( !rcl_exist_addon('rcl-chat') ) return false; // если не активен Rcl Chat (Чат)
-
-    $tab_data = array(
-        'id'=>'fc_float_chat',
-        'name'=> 'Float chat',
-        'supports'=>array('ajax','dialog'),
-        'public'=>1,
-        'icon'=>'fa-laptop',
-        'output'=> '',          // не задаем вывод, т.к. нам не нужен вывод в лк. Ф-ция ниже fchat_button() выведет где нам надо
-        'content'=>array(
-            array(		// массив данных первой дочерней вкладки
-                'callback' => array(
-                    'name'=>'fchat_shortcode',
-                )
-            )
-        )
-    );
-    rcl_tab($tab_data);
-}
-add_action('init','fchat_tab');
 
 
-// функция обработчик
+// ajax ответ
 // мы правильные ребята - do_shortcode не используем
 // но для примера его ниже оставил
-function fchat_shortcode(){
+function fchat_load(){
+    rcl_verify_ajax_nonce();
+
     global $user_ID;
 
     $fchat_uploads = 0;
@@ -60,61 +55,35 @@ function fchat_shortcode(){
     $get_chat = rcl_chat_shortcode(array('chat_room'=>'fchat','userslist'=>1,'file_upload'=>$fchat_uploads,'in_page'=>30));
     //$get_chat = do_shortcode('[rcl-chat chat_room="fchat" userslist="1" file_upload="1" in_page="15"]');
 
-    $content = '<h3>'.rcl_get_option('fchat_name').'</h3>';
+    $content = '<div class="fc_title">'.rcl_get_option('fchat_name').'</div>';
 
-    if(rcl_get_option('fchat_guest') == 1){ // гость может смотреть чат
+    if(rcl_get_option('fchat_guest', 'yes') == 'yes'){  // гость может смотреть чат
         $content .= $get_chat;
-    } else {                                // гостю нельзя смотреть чать
+    } else {                                            // гостю нельзя смотреть чат
         if($user_ID){
             $content .= $get_chat;
         } else {
             $content .= '<div class="chat-form">';
-                $content .= '<div class="chat-notice"><span class="notice-error"></span></div>'; // поддержка допа you need to login
+                $content .= '<div class="ynl-fc-box chat-notice"><span class="notice-error"></span></div>'; // поддержка допа you need to login
             $content .= '</div>';
-            $content .= rcl_get_include_template('fchat-guest-info.php',__FILE__); // подключаем шаблон
+            $content .= rcl_get_include_template('fchat-guest-info.php',__FILE__);  // подключаем шаблон
         }
     }
 
-    return $content;
+    wp_send_json(array(
+        'content' => $content
+    ));
 }
+rcl_ajax_action('fchat_load',true);
+
 
 
 // token внутри функции rcl_chat_clear_beat('ZmNoYXQ=');
 // берется из атрибута шорткод: chat_room="fchat"
 //
 // функция по клику гасит ajax запросы к чату
-// клик по оверлею, по крестику, и кнопке "Закрыть"
+// клик по оверлею, по крестику
 //
-// if(e.target != this) return; - чтобы только по клику на этих элементах, а не на дочерних
-// - касается глобального класса .ssi-modalOuter.fc_float_chat
-//
-// по клику на кнопке показываю в ней спиннер загрузки
-// хотя спинер автоматом убивается как контент вкладки загружен, а по таймауту на всякий случай убираю его
-// можно было повесить на js событие rcl_add_action('rcl_upload_tab','наша ф-ция'), но не стал
-function fchat_burn_in_hell(){
-    if ( !rcl_exist_addon('rcl-chat') ) return false; // если не активен Rcl Chat (Чат)
-
-    echo "<script>
-(function($){
-$(document).on( 'click', '.ssi-modalOuter.fc_float_chat, .ssi-modalOuter.fc_float_chat .ssi-closeIcon', function(e) {
-    if(e.target != this) return;
-    console.info('fchat: click close');
-    rcl_chat_clear_beat('ZmNoYXQ=');
-    console.log('fchat: You killed me :(');
-});
-
-// ставим спинер на кнопку по вызову чата
-$('#tab-button-fc_float_chat').click(function(){
-    rcl_preloader_show(jQuery('#tab-button-fc_float_chat'),30);
-    setTimeout(function(){
-        rcl_preloader_hide();
-    },2000)
-});
-})(jQuery);
-</script>";
-}
-add_action('wp_footer','fchat_burn_in_hell');
-
 // фрагмент для вставки в скрипт выше - проверить токены чата
 /* for (var token in rcl_chat_beat) {
     console.log('for start');
@@ -127,53 +96,94 @@ add_action('wp_footer','fchat_burn_in_hell');
 }; */
 
 
-/*
-*   TODO:
-*       9-09-2016
-*           Скрипт fileupload нам нужен, если в чате разрешена загрузка файлов
-*           В дальнейшем можно опцией сделать отключать загрузку файлов и не забыть похерить этот скрипт
-*       29-09-2016 - выполнено
-*/
 
-// функция вывода кнопки за пределами личного кабинета
-function f_chat_button(){
+// функция вывода кнопки
+function fchat_button($dop_class){
     if ( !rcl_exist_addon('rcl-chat') ) return false; // если не активен Rcl Chat (Чат)
 
-    global $user_ID;
-    $button = rcl_get_tab_button('fc_float_chat',$user_ID);
+    rcl_dialog_scripts();   // скрипты ssi
 
-    rcl_dialog_scripts();       // скрипты ssi
-
-    if(rcl_get_option('fchat_upload') == 'yes') { // в настройках разрешена загрузка файлов
-        rcl_fileupload_scripts();               // скрипты fileupload (загрузка файлов)
+    if( rcl_get_option('fchat_upload') == 'yes' && is_user_logged_in() ) {  // в настройках разрешена загрузка файлов и залогинен
+        rcl_fileupload_scripts();                                           // скрипты fileupload (загрузка файлов)
     }
 
-    return $button;
+    if( !$dop_class ) $dop_class = 'fc_manual';
+
+    $txt = rcl_get_option('fchat_text','Float chat');
+    $ico = rcl_get_option('fchat_ico','fa-laptop');
+
+    $out = '<div class="fc_wrap '.$dop_class.'" style="display:none;">';
+        $out .= '<div class="fc_bttn">';
+            $out .= '<i class="rcli '.$ico.'"></i>';
+            $out .= '<span class="fc_text">'.$txt.'</span>';
+        $out .= '</div>';
+    $out .= '</div>';
+
+    return $out."\r\n";
 }
 
 
 // вывод автоматически
 function fchat_auto(){
-    if(rcl_get_option('fchat_button') != 'auto') return false;
+    if(rcl_get_option('fchat_button', 'auto') != 'auto') return false;
 
-    echo f_chat_button();
+    echo fchat_button($dop_class = 'fc_float');
 }
-add_action('wp_head','fchat_auto');
+add_action('wp_footer','fchat_auto',5);
 
 
 // вывод шорткодом [fchat_init]
 function fchat_init_shortcode(){
-    if(rcl_get_option('fchat_button') == 'auto') return false; // если стоит авто вывод кнопки f-чата
+    if(rcl_get_option('fchat_button', 'auto') == 'auto') return false; // если стоит авто вывод кнопки f-чата
 
-    return f_chat_button();
+    return fchat_button($dop_class = 'fc_manual');
 }
 add_shortcode('fchat_init','fchat_init_shortcode');
 
 
 
-// инлайн стиль в шапке -чтоб не дергалась кнопка
-function fchat_inline_styles($styles){
-    $styles .= 'body > #tab-button-fc_float_chat{display: none;}';
+// инлайн стили
+function fchat_inline_color($styles,$rgb){
+    if( !rcl_exist_addon('rcl-chat') ) return $styles;
+
+    $offset = rcl_get_option('fchat_pad', 0);
+
+    if( rcl_get_option('fchat_button', 'auto') == 'auto' ){
+        if( rcl_get_option('fchat_pos', 'top') == 'bottom' ){   // автоматический вывод кнопки и внизу
+            $styles .= '.fc_wrap.fc_float{top:auto;}';
+
+            if($offset){
+                $styles .= '.fc_wrap.fc_float{bottom:'.$offset.'px;}';
+            } else {
+                $styles .= '.fc_wrap.fc_float{bottom:5px;}';
+            }
+
+        } else if ( rcl_get_option('fchat_pos', 'top') == 'top' ){
+            if($offset){
+                $styles .= '.fc_wrap.fc_float{top:'.$offset.'px;}';
+            }
+        }
+    }
+
+
+    list($r, $g, $b) = $rgb;
+    $color = $r.','.$g.','.$b;
+
+    $styles .= '
+        .fc_wrap{
+            background-color: rgb('.$color.');
+        }
+    ';
+
+    if( !is_user_logged_in() ) return $styles;
+
+    $styles .= '
+        .fchat_dialog.ssi-modal .rcl-chat{
+            background-color: rgba('.$color.',0.035);
+        }
+    ';
+
+
     return $styles;
 }
-add_filter('rcl_inline_styles','fchat_inline_styles',10);
+add_filter('rcl_inline_styles','fchat_inline_color',10,2);

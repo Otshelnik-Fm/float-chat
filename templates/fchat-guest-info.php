@@ -10,6 +10,7 @@
 */
 ?>
 
-<span class="fchat_guest_info">
+<div class="fc_denied">Access Denied!</div>
+<div class="fc_guest_txt">
     Вам нужно войти на сайт, чтобы просматривать чат и общаться в чате!
-</span>
+</div>
